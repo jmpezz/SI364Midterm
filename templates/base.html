@@ -4,9 +4,24 @@
 
 <form action="{{ url_for('home') }}" method="POST">
     {{ form.name.label() }}{{ form.name() }}<br>
+    {{form.restaurant.label() }}{{form.restaurant() }}<br>
+    {{form.location.label() }}{{form.location() }}<br>
     {{ form.submit() }}
     {{ form.hidden_tag() }}
 </form>
 
+<div>
+{% for message in get_flashed_messages() %}
+	<strong>{{ message }}</strong>
+{% endfor %}
+</div>
+
+<a href = "{{ url_for('all_names')}}">List of entered names</a>
+<br>
+<a href = "{{ url_for('all_restaurants')}}">List of all restaurants</a>
+<br>
+<a href = "{{ url_for('get_data')}}">List of all restaurants and their reviews</a>
+<br>
+<a href = "{{ url_for('rate_form')}}">Rate a restaurant you've been to</a>
 
 {% endblock %}
