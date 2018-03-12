@@ -2,10 +2,12 @@
 
 {% block content1 %}
 
+<h1>Restaurant Search and Rate!</h1>
+
 <form action="{{ url_for('home') }}" method="POST">
     {{ form.name.label() }}{{ form.name() }}<br>
-    {{form.restaurant.label() }}{{form.restaurant() }}<br>
-    {{form.location.label() }}{{form.location() }}<br>
+    {{ form.restaurant.label() }}{{form.restaurant() }}<br>
+    {{ form.location.label() }}{{form.location() }}<br>
     {{ form.submit() }}
     {{ form.hidden_tag() }}
 </form>
@@ -23,5 +25,6 @@
 <a href = "{{ url_for('get_data')}}">List of all restaurants and their reviews</a>
 <br>
 <a href = "{{ url_for('rate_form')}}">Rate a restaurant you've been to</a>
-
+<br>
+<a href = "{{ url_for('ratings')}}">See personal restaurant ratings</a>
 {% endblock %}

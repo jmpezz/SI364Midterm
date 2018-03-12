@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content1 %}
+
+<h1>Rate a Restaurant!</h1>
+
+<form action="{{ url_for('rate_form') }}" method="POST">
+    {{ form.restaurants.label() }}{{form.restaurants() }}<br>
+    {{ form.rate_rest.label() }}{{form.rate_rest() }}<br>
+    {{ form.service.label() }}{{form.service() }}<br>
+    {{ form.food.label() }}{{form.food() }}<br>
+    {{ form.price.label() }}{{form.price() }}<br>
+    {{ form.goback.label() }}{{form.goback()}}<br>
+    {{ form.submit() }}
+    {{ form.hidden_tag() }}
+</form>
+
+{% for r in all_ratings %}
+	You gave {{ r[0] }} a <strong>{{ r[1] }}</strong>!
+{% endfor %}
+
+<br><br>
+
+<a href = "{{ url_for('home')}}">See more restaurant reviews</a>
+<br>
+<a href = "{{ url_for('get_data')}}">List of all restaurants and their reviews</a>
+<br>
+<a href = "{{ url_for('rate_form')}}">Rate another restaurant you've been to</a>
+<br>
+<a href = "{{ url_for('ratings')}}">See personal restaurant ratings</a>
+{% endblock %}

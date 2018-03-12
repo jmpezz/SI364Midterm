@@ -2,21 +2,23 @@
 
 {% block content1 %}
 
-<h1>Names Visited</h1>
+<h1>Restaurants</h1>
 
-{% for n in names %}
-    <p>{{ n }}</p>
+<br>
+
+{% for r in restaurants %}
+	<p>{{ r }}</p>
 {% endfor %}
 
-<br>
-<a href = "{{ url_for('home')}}">Enter a restaurant to see reviews</a>
-<br>
-<a href = "{{ url_for('all_restaurants')}}">List of all restaurants</a>
+<br><br>
+
+<a href = "{{ url_for('home')}}">Enter another restaurant</a>
 <br>
 <a href = "{{ url_for('get_data')}}">List of all restaurants and their reviews</a>
 <br>
 <a href = "{{ url_for('rate_form')}}">Rate a restaurant you've been to</a>
 <br>
 <a href = "{{ url_for('ratings')}}">See personal restaurant ratings</a>
+
 
 {% endblock %}

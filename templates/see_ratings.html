@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content1 %}
+
+<h1>Personal Restaurant Ratings</h1>
+
+<br>
+
+{% for r in see_ratings %}
+	<p>{{ r }}</p>
+{% endfor %}
+
+<br><br>
+
+<a href = "{{ url_for('home')}}">Enter another restaurant</a>
+<br>
+<a href = "{{ url_for('get_data')}}">List of all restaurants and their reviews</a>
+<br>
+<a href = "{{ url_for('rate_form')}}">Rate another restaurant you've been to</a>
+
+
+{% endblock %}
