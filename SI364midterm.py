@@ -121,11 +121,11 @@ def home():
         name = form.name.data
         restaurant = form.restaurant.data
         location = form.location.data
-
+        #adding names to Names DB
         newname = Name(name = name)
         db.session.add(newname)
         db.session.commit()
-
+        #making sure there is no duplicates and adding to Restaurant DB
         same_rest = Restaurant.query.filter_by(restaurant = restaurant, location = location).first()
         if same_rest:
             rest = Restaurant.query.filter_by(restaurant = restaurant, location = location)
@@ -133,20 +133,19 @@ def home():
             rest = Restaurant(restaurant = restaurant, location = location)
             db.session.add(rest)
             db.session.commit()
-
+        #connecting to the Yelp Api and accessing correct data
         baseurl = 'https://api.yelp.com/v3/businesses/search'
         params = {'api_key': api_key, 'term': restaurant, 'location': location}
         headers = {'Authorization': 'Bearer %s' % api_key}
         data = requests.get(baseurl, headers = headers, params = params)
         json_data = json.loads(data.text)
-
-        #retrieving restaurant ID & reviews data
+        #retrieving reviews data from Yelp
         restaurantID = json_data['businesses'][0]['id']
         yelp_review = 'https://api.yelp.com/v3/businesses/'
         yelp_review2 = yelp_review + restaurantID + '/reviews'
         getdata = requests.get(yelp_review2, headers = headers)
         rev_data = json.loads(getdata.text)
-
+        #adding reviews to Review DB
         for r in rev_data['reviews']:
             rest = Restaurant.query.filter_by(restaurant = restaurant, location = location).first()
             review = Review(review = r['text'], restaurant_id = rest.id)
@@ -164,17 +163,19 @@ def home():
         flash("!!!! ERRORS IN FORM SUBMISSION - " + str(errors))
     return render_template('base.html', form=form)
 
+#pulls all names entered
 @app.route('/names')
 def all_names():
     names = Name.query.all()
     return render_template('name_example.html', names=names)
 
+#pulls all restaurant names entered
 @app.route('/restaurants')
 def all_restaurants():
     restaurants = Restaurant.query.all()
     return render_template('restaurants.html', restaurants = restaurants)
 
-#
+#pulls reviews from Review DB
 @app.route('/get_data')
 def get_data():
     restaurants = Restaurant.query.all()
@@ -188,7 +189,7 @@ def get_data():
                 rest_list.append(b)
     return render_template('restaurant_reviews.html', data = rest_list)
 
-#adds data entered into the rating form into the DB
+#adds data entered into the rating form into the Rating DB
 @app.route('/rating', methods = ['GET', 'POST'])
 def rate_form():
     form = RateForm()
@@ -207,8 +208,8 @@ def rate_form():
         db.session.commit()
 
         return render_template('rate_form.html', form = form, all_ratings = rating)
-    return render_template('rate_form.html', form = form)
 
+#pulls rating data entered from Rating DB
 @app.route('/see_ratings')
 def ratings():
     see_ratings = Ratings.query.all()
