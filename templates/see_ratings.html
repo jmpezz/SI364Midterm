@@ -10,6 +10,10 @@
 	<p>{{ r }}</p>
 {% endfor %}
 
+{% if not see_ratings %}
+	You have <strong>no</strong> ratings yet!
+{% endif %}
+
 <br><br>
 
 <a href = "{{ url_for('home')}}">Enter another restaurant</a>

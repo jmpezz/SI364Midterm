@@ -59,7 +59,7 @@ class Restaurant(db.Model):
     reviews = db.relationship('Review', backref = 'restaurant')
 
     def __repr__(self):
-        return 'Restaurant Name: {} (Restaurant ID: {})'.format(self.restaurant, self.id)
+        return 'Restaurant Name: {}'.format(self.restaurant)
 
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -68,7 +68,7 @@ class Review(db.Model):
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'))
 
     def __repr__(self):
-        return 'Review: {} (Restaurant ID: {})'.format(self.review, self.restaurant_id)
+        return 'Review: {}'.format(self.review)
 
 class Ratings(db.Model):
     __tablename__ = 'restaurant_ratings'
@@ -81,7 +81,7 @@ class Ratings(db.Model):
     goback = db.Column(db.String(200))
 
     def __repr__(self):
-        return "You gave {} a {} overall!".format(self.restaurant_name, self.rate_rest)
+        return "You rated {} a {} overall!".format(self.restaurant_name, self.rate_rest)
 
 ###################
 ###### FORMS ######
@@ -142,19 +142,19 @@ def home():
 
         #retrieving restaurant ID & reviews data
         restaurantID = json_data['businesses'][0]['id']
-        url_review = 'https://api.yelp.com/v3/businesses/'
-        url_review2 = url_review + restaurantID + '/reviews'
-        getdata = requests.get(url_review2, headers = headers)
+        yelp_review = 'https://api.yelp.com/v3/businesses/'
+        yelp_review2 = yelp_review + restaurantID + '/reviews'
+        getdata = requests.get(yelp_review2, headers = headers)
         rev_data = json.loads(getdata.text)
 
-        for x in rev_data['reviews']:
+        for r in rev_data['reviews']:
             rest = Restaurant.query.filter_by(restaurant = restaurant, location = location).first()
-            review = Review(review = x['text'], restaurant_id = rest.id)
-            rev_entry = Review.query.filter_by(review = x['text']).first()
-            if rev_entry:
-                rev = rev_entry
+            review = Review(review = r['text'], restaurant_id = rest.id)
+            rev_db = Review.query.filter_by(review = r['text']).first()
+            if rev_db:
+                rev = rev_db
             else:
-                rev = Review(review = x['text'], restaurant_id = rest.id)
+                rev = Review(review = r['text'], restaurant_id = rest.id)
                 db.session.add(rev)
                 db.session.commit()
         return redirect(url_for('get_data'))
@@ -174,19 +174,21 @@ def all_restaurants():
     restaurants = Restaurant.query.all()
     return render_template('restaurants.html', restaurants = restaurants)
 
+#
 @app.route('/get_data')
 def get_data():
     restaurants = Restaurant.query.all()
     reviews = Review.query.all()
-    datalist = []
-    for x in restaurants:
-        restID = x.id
-        datalist.append(x)
-        for y in reviews:
-            if restID == y.restaurant_id:
-                datalist.append(y)
-    return render_template('restaurant_reviews.html', data = datalist)
+    rest_list = []
+    for r in restaurants:
+        restID = r.id
+        rest_list.append(r)
+        for b in reviews:
+            if restID == b.restaurant_id:
+                rest_list.append(b)
+    return render_template('restaurant_reviews.html', data = rest_list)
 
+#adds data entered into the rating form into the DB
 @app.route('/rating', methods = ['GET', 'POST'])
 def rate_form():
     form = RateForm()
@@ -205,6 +207,7 @@ def rate_form():
         db.session.commit()
 
         return render_template('rate_form.html', form = form, all_ratings = rating)
+    #return redirect(url_for('see_ratings.html'))
     return render_template('rate_form.html', form = form)
 
 @app.route('/see_ratings')
