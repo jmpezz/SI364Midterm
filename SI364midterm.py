@@ -207,7 +207,6 @@ def rate_form():
         db.session.commit()
 
         return render_template('rate_form.html', form = form, all_ratings = rating)
-    #return redirect(url_for('see_ratings.html'))
     return render_template('rate_form.html', form = form)
 
 @app.route('/see_ratings')
